@@ -1,0 +1,1 @@
+rootProject.name = "com.sainis.send-to-kindle-service"
