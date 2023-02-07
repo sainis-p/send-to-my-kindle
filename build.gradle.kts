@@ -34,6 +34,8 @@ dependencies {
     implementation("com.google.apis:google-api-services-gmail:v1-rev20220404-2.0.0")
     implementation("javax.activation:activation:1.1.1")
     implementation("com.sun.mail:javax.mail:1.6.2")
+    implementation("org.litote.kmongo:kmongo:3.12.2")
+    implementation("org.mindrot:jbcrypt:0.4")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation(kotlin("stdlib-jdk8"))

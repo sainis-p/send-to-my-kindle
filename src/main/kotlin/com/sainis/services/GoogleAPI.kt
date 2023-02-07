@@ -1,4 +1,4 @@
-package com.sainis
+package com.sainis.services
 
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
@@ -19,8 +19,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStreamReader
 
-/* class to demonstarte use of Drive files list API */
-object DriveQuickStart {
+object GoogleAPI {
     /**
      * Application name.
      */
@@ -54,7 +53,7 @@ object DriveQuickStart {
     private fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential {
         // Load client secrets.
         val `in` =
-            DriveQuickStart::class.java.getResourceAsStream(CREDENTIALS_FILE_PATH)
+            GoogleAPI::class.java.getResourceAsStream(CREDENTIALS_FILE_PATH)
                 ?: throw FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH)
         val clientSecrets =
             GoogleClientSecrets.load(
@@ -72,6 +71,7 @@ object DriveQuickStart {
                 .build()
         val receiver = LocalServerReceiver.Builder().setPort(8888).build()
         //returns an authorized Credential object.
+        // Change this to a specific userId to save specific files
         return AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
     }
 
