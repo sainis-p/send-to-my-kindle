@@ -1,6 +1,6 @@
 version: '3'
 services:
-  db:
+  mongodb:
     image: mongo
     ports:
       - "27017:27017"
@@ -9,7 +9,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
       MONGO_INITDB_DATABASE: SendToKindle
     volumes:
+      - ./init.js:/docker-entrypoint-initdb.d/init.js:ro
       - mongodb_data:/data/db
-
 volumes:
   mongodb_data:
