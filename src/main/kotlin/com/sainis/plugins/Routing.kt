@@ -3,6 +3,7 @@ package com.sainis.plugins
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
 import com.sainis.models.Account
+import com.sainis.models.UserSession
 import com.sainis.sendEmailWithAttachment
 import com.sainis.services.GoogleAPI.getDrive
 import com.sainis.services.GoogleAPI.getGmail
@@ -12,6 +13,7 @@ import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import kotlinx.html.*
 import org.bson.Document
 import org.mindrot.jbcrypt.BCrypt
@@ -83,24 +85,33 @@ fun Application.configureRouting(db: MongoDatabase) {
             if (BCrypt.checkpw(password, user["password"].toString())) {
                 call.respondText("Password for $username is incorrect")
             } else {
+                val account = Account(
+                    username = user["username"].toString(),
+                    password = user["password"].toString(),
+                    kindleEmail = user["kindleEmail"].toString()
+                )
+                call.sessions.set(UserSession(user["_id"].toString(), account))
                 call.respondRedirect("/app")
             }
         }
 
         get("/app") {
             call.respondHtml {
+                head {
+                    link(rel = "stylesheet", href = "https://cdn.jsdelivr.net/npm/tailwindcss@2.x/dist/tailwind.min.css")
+                }
                 body {
-                    form(action = "/send-to-kindle", encType = FormEncType.applicationXWwwFormUrlEncoded, method = FormMethod.post) {
+                    form(action = "/send-to-kindle", encType = FormEncType.applicationXWwwFormUrlEncoded, method = FormMethod.post, classes = "bg-white p-6 rounded-lg shadow-md") {
                         p {
                             +"GoogleDrive Id:"
-                            textInput(name = "driveId")
+                            textInput(name = "driveId", classes = "block border border-gray-400 p-2 rounded-lg w-full")
                         }
                         p {
                             +"My Kindle email:"
-                            emailInput(name = "kindleEmail")
+                            emailInput(name = "kindleEmail", classes = "block border border-gray-400 p-2 rounded-lg w-full")
                         }
                         p {
-                            submitInput() { value = "Send" }
+                            submitInput(classes = "bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600") { value = "Send" }
                         }
                     }
                 }
@@ -109,38 +120,44 @@ fun Application.configureRouting(db: MongoDatabase) {
         }
 //1kZHuU927vBvh4PxL1t7No3xLaDyxB6ZH
         post("/send-to-kindle") {
-            val drive = getDrive()
-            val gmail = getGmail()
-            val formParameters = call.receiveParameters()
-            val driveId = formParameters["driveId"].toString()
-            val kindleEmail = formParameters["kindleEmail"].toString()
-            sendEmailWithAttachment("sainis.panag@gmaill.com", kindleEmail, "Convert", "Take this", drive, gmail, driveId)
+            val session = call.sessions.get<UserSession>()
+            session?.let { s ->
+                val drive = getDrive(s.userId)
+                val gmail = getGmail(s.userId)
+                val formParameters = call.receiveParameters()
+                val driveId = formParameters["driveId"].toString()
+                val kindleEmail = formParameters["kindleEmail"].toString()
+                sendEmailWithAttachment("sainis.panag@gmaill.com", kindleEmail, "Convert", "Take this", drive, gmail, driveId)
+            }
             call.respondText("All Done")
         }
 
         get("/register") {
             call.respondHtml {
+                head {
+                    link(rel = "stylesheet", href = "https://cdn.jsdelivr.net/npm/tailwindcss@2.x/dist/tailwind.min.css")
+                }
                 body {
                     h1 { +"Register" }
-                    form(method = FormMethod.post, action = "/register") {
+                    form(method = FormMethod.post, action = "/register", classes = "bg-white p-6 rounded-lg shadow-md") {
                         p {
                             label { +"Username:" }
-                            textInput(name = "username")
+                            textInput(name = "username", classes = "block border border-gray-400 p-2 rounded-lg w-full")
                         }
                         p {
                             label { +"Password:" }
-                            passwordInput(name = "password")
+                            passwordInput(name = "password", classes = "block border border-gray-400 p-2 rounded-lg w-full")
                         }
                         p {
                             label { +"Kindle email:" }
-                            textInput(name = "kindleEmail")
+                            textInput(name = "kindleEmail", classes = "block border border-gray-400 p-2 rounded-lg w-full")
                         }
                         p {
-                            submitInput()
+                            submitInput(classes = "bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600")
                         }
                     }
                     p {
-                        a(href = "/") { +"Back to login" }
+                        a(href = "/", classes = "text-indigo-500 underline") { +"Back to login" }
                     }
                 }
             }

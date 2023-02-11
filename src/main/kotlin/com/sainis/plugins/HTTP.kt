@@ -1,10 +1,10 @@
 package com.sainis.plugins
 
+import com.sainis.models.UserSession
 import io.ktor.http.*
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.request.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.sessions.*
 
 fun Application.configureHTTP() {
     install(CORS) {
@@ -15,6 +15,11 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.Authorization)
         allowHeader("MyCustomHeader")
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+    }
+    install(Sessions) {
+        cookie<UserSession>("USER_SESSION") {
+            cookie.extensions["send-to-kindle"] = "lax"
+        }
     }
 
 }

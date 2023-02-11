@@ -1,3 +1,3 @@
 package com.sainis.models
 
-data class UserSession()
+data class UserSession(val userId: String, val account:  Account)

@@ -13,6 +13,7 @@ fun main() {
 }
 
 fun Application.module() {
+
     val db = MongoDB.getInstance().getDatabase()
     configureHTTP()
     configureRouting(db)

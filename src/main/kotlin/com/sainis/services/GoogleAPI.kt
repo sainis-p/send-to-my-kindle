@@ -50,7 +50,7 @@ object GoogleAPI {
      * @throws IOException If the credentials.json file cannot be found.
      */
     @Throws(IOException::class)
-    private fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential {
+    private fun getCredentials(userId: String, HTTP_TRANSPORT: NetHttpTransport): Credential {
         // Load client secrets.
         val `in` =
             GoogleAPI::class.java.getResourceAsStream(CREDENTIALS_FILE_PATH)
@@ -72,21 +72,21 @@ object GoogleAPI {
         val receiver = LocalServerReceiver.Builder().setPort(8888).build()
         //returns an authorized Credential object.
         // Change this to a specific userId to save specific files
-        return AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
+        return AuthorizationCodeInstalledApp(flow, receiver).authorize(userId)
     }
 
-    fun getDrive(): Drive {
+    fun getDrive(userId: String): Drive {
             // Build a new authorized API client service.
         val HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        return Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        return Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(userId, HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
     }
 
-    fun getGmail(): Gmail {
+    fun getGmail(userId: String): Gmail {
         // Build a new authorized API client service.
         val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
-        return Gmail.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
+        return Gmail.Builder(httpTransport, JSON_FACTORY, getCredentials(userId, httpTransport))
             .setApplicationName(APPLICATION_NAME)
             .build();
 
