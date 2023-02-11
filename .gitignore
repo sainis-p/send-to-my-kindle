@@ -41,3 +41,4 @@ out/
 ###### Project Specific
 tokens/
 src/main/resources/credentials.json
+database/data
