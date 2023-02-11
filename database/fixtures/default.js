@@ -1,12 +1,12 @@
 print("Started Adding the Users.");
-db = db.getSiblingDB("SendToKindle");
+db = connect("mongodb://localhost/send_to_kindle");
 db.createUser({
-  user: "appUser",
-  pwd: "appPassword",
+  user: "root",
+  pwd: "rootpassword",
   roles: [
     {
       role: "readWrite",
-      db: "SendToKindle"
+      db: "send_to_kindle"
     }
   ]
 });

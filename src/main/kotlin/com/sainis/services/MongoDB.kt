@@ -6,11 +6,11 @@ import com.mongodb.ServerAddress
 import com.mongodb.client.MongoClients
 
 class MongoDB private constructor() {
-        private val username = "appUser"
-        private val password = "appPassword"
+        private val username = "root"
+        private val password = "rootpassword"
         private val host = "0.0.0.0"
         private val port = 27017
-        private val databaseName = "SendToKindle"
+        private val databaseName = "send_to_kindle"
 
         private val credential = MongoCredential.createScramSha1Credential(username, databaseName, password.toCharArray())
 
@@ -22,7 +22,7 @@ class MongoDB private constructor() {
 
         private val client = MongoClients.create(clientSettings)
 
-        private val database = client.getDatabase("SendToKindle")
+        private val database = client.getDatabase(databaseName)
 
         companion object {
             private var instance: MongoDB? = null
